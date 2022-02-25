@@ -69,7 +69,7 @@
 
 @(define-syntax (Defmodule stx)
   (if local #'(defmodule "queens.rkt" #:packages ())
-            #'(defmodule queens/queens #:packages ())))
+            #'(defmodule N-queens/queens #:packages ())))
 
 @(define-syntax-rule (nber x ...) (nb (elemref    x ...)))
 @(define-syntax-rule (nbrl x ...) (nb (racketlink x ...)))
