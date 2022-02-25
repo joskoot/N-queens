@@ -92,7 +92,7 @@ The symmetries are:
  #:column-properties '(right center center center left)]}
 
 For a square R@↑{2} is the same as inversion
-(placing every vertex to opposit position with repsect of the center of the square).
+(placing every vertex to opposit position with respect to the center of the square).
 The symmetries form a group, named @italic{C}@↓{4v} in the nomenclature of Schönflies,
 4.m in the nomenclature of Shubnikov and 4mm in the International nomenclature.
 The table of composition, modulo the order of rows and columns, is:
