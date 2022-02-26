@@ -26,16 +26,16 @@ If optional argument @racket[show-solutions?] is @nbr[#f],
 no solutions are shown and the other two optional arguments are ignored.
 If @racket[show-solutions?] is not @nbr[#f], and argument @racket[whole-classes?] is @nbr[#f],
 one solution of every class of symmetrically equivalent solutions is printed.
-If both @racket[show-solutions?] and @racket[whole-classes?] have true value, all solutions are printed.
+If both @racket[show-solutions?] and @racket[whole-classes?] have true value,
+all solutions are printed.
 If @racket[show-boards?] is not @nbr[#f],
 solutions are printed as pictures, otherwise they are printed as lists.
 
-A rank is a row of the board. A file is a column of the board.
-Ranks are identified by the numbers @nbr[0] up to but not including @nbr[N].
-Usually files are named 'a', 'b', 'c', etc.
-However, it is easier to identify the files by the numbers @nbr[0] up to but not including @nbr[N].
-As far as applicable, solutions are sorted according to the order of their class of symmetrical
-equivalence. Within each class the solutions are sorted according to their representation.
+A rank is a row of the board. A file a column.
+Chess players number the ranks from 1 up to and including @nbr[N] and files by the letters
+'a', 'b', 'c', etc. 
+However, when programming it is easier to identify ranks and files by the numbers
+@nbr[0] up to but not including @nbr[N].
 In every solution every rank and every file contains exactly one queen.
 Therefore a solution can be written as:
 
@@ -51,6 +51,10 @@ the i-th element showing which file in rank i contains the queen.
 The difference between these two interpretations corresponds to
 a reflection in the diagonal from field @tt{(0 0)} to field @tt{(@nbr[N]-1 @nbr[N]-1)}.
 Reversal of this list of files corresponds to reflection in the centerline parellel to the ranks.
+
+Solutions are sorted according to the order of their class of symmetrical
+equivalence. Within each such class they are sorted according to their representation
+as a list of ranks or a list of files.
 
 For @nbr[N]=@nbr[0] and @nbr[N]=@nbr[1] there is one solution with all symmetries of a square.
 For @nbr[N]=@nbr[2] and @nbr[N]=@nbr[3] there are no solutions.
