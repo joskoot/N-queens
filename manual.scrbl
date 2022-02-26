@@ -109,7 +109,10 @@ The table of composition, modulo the order of rows and columns, is:
  #:sep (hspace 2)
  #:row-properties '(top-border () () () () () () bottom-border)]}
 
-Each element is the composition of the element in the left column with that in the top row.
+Each element is the composition of the element in the left column with that in the top row,
+the left column and the top row included. Because the top-left corner has identity E and for
+every element P we have E•P=P=P•E, the left column and top row can be read both as labels and
+as part of the table proper.
 Notice that the composition is not abelean. For example R•S@↓{d1}=S@↓{v} and S@↓{d1}•R=S@↓{h}.
 The group can be formed from a base of two elements only. The minimal bases are:
 
@@ -211,3 +214,7 @@ and the total number of solutions is even.
 Notice the peculiar small number of solutions for @nbr[N]=@nbr[6],
 all in the same class and with symmetry R@↑{2}.
 See @url{https://oeis.org/A000170} and @url{https://oeis.org/A002562} for more values.}
+
+@section{Example}
+@Interaction[
+(queens 8 #t #f #f)]
