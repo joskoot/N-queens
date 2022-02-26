@@ -362,7 +362,7 @@ See https://oeis.org/A000170 and https://oeis.org/A002562 for more values.
       (when whole-classes? (for ((sol (in-list (cdr class)))) (printf "~s~n" sol)))))))
   (printf line))
 
- (define line (string-append (make-string 95 #\―) "~n"))
+ (define line (string-append (make-string 75 #\―) "~n"))
 
  (define (map-length classes)
   (let loop ((class-size '(1 2 4 8)) (done 0))
