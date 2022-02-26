@@ -114,7 +114,7 @@ the left column and the top row included. Because the top-left corner has identi
 every element P we have E•P=P=P•E, the left column and top row can be read both as labels and
 as part of the table proper.
 Notice that the composition is not abelean. For example R•S@↓{d1}=S@↓{v} and S@↓{d1}•R=S@↓{h}.
-The group can be formed from a base of two elements only. The minimal bases are:
+The group can be formed from a base of two elements only. There are 12 minimal bases:
 
 @inset{@Tabular[
 ((      "{R"       (list "S"@↓{h} "}"))
@@ -132,12 +132,16 @@ The group can be formed from a base of two elements only. The minimal bases are:
 
 In the program a base of three elements is used: S@↓{v}, S@↓{h} and S@↓{d1}.
 This is done because S@↓{v} and S@↓{h} are fast functions.
-All other elements are made by composition with S@↓{d1}, which is slower.
+All other elements, E excepted, are made by composition with S@↓{d1}, which is slower.
 
 @inset{@Tabular[
-(("R" "=" (list "S"@↓{v}"•S"@↓{d1}) "" "")
+(("E" "" "trivial" 'cont 'cont)
+ ("R" "=" (list "S"@↓{v}"•S"@↓{d1}) "" "")
  ((list "R"@↑{2}) "=" (list "S"@↓{h}"•S"@↓{v}) "" "")
  ((list "R"@↑{3}) "=" (list "S"@↓{h}"•S"@↓{d1}) "" "")
+ ((list "S"@↓{h}) "" "used as base element" 'cont 'cont) 
+ ((list "S"@↓{v}) "" "used as base element" 'cont 'cont)
+ ((list "S"@↓{d1}) "" "used as base element" 'cont 'cont)
  ((list "S"@↓{d2}) "=" (list "R" @↑{2}"•S"@↓{d1}) "=" (list "S"@↓{h}"•S"@↓{v}"•S"@↓{d1})))
  #:sep (hspace 1)]}
 
