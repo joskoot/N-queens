@@ -149,11 +149,11 @@ All other elements, E excepted, are made by composition with S@↓{d1}, which is
  ((list "S"@↓{d2}) "=" (list "R" @↑{2}"•S"@↓{d1}) "=" (list "S"@↓{h}"•S"@↓{v}"•S"@↓{d1})))
  #:sep (hspace 1)]}
 
-For @nbr[N]≥@nbr[4] a reflection always produces a distinct solution,
-but not every reflection necessarily yields a distinct solution.
+For @nbr[N]≥@nbr[4], given a solution s and a reflection S, we always have
+S(s)≠s, but distinct reflections not necessarily yield distinct solutions.
 For example, applied to a solution that is invariant under rotation through 90°,
-every reflection yields the same solution.
-Id est, if R(s)=s, then S@↓{v}(s)=S@↓{h}(s)=S@↓{d1}(s)=S@↓{d2}(s).
+every reflection yields the same solution, for R(s)=s
+implies S@↓{v}(s)=S@↓{h}(s)=S@↓{d1}(s)=S@↓{d2}(s).
 
 For @nbr[N]=@nbr[0] there is 1 solution with all symmetries
 (no queen at all on an empty board)@(lb)
