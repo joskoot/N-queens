@@ -223,4 +223,4 @@ See @url{https://oeis.org/A000170} and @url{https://oeis.org/A002562} for more v
 @Interaction[
 (queens 8 #t #f #f)]
 
-@(image "picture-example.gif")
+@(image "../../picture-example.gif")
