@@ -22,13 +22,13 @@
 Computes all solutions of the @nbr[N]-queens problem on an @nbr[N]×@nbr[N] board and
 shows the number of solutions and the number of symmetrically distinct solutions.
 
-If optional argument @nbr[show-solutions?] is @nbr[#f],
+If optional argument @racket[show-solutions?] is @nbr[#f],
 no solutions are shown and the other two optional arguments are ignored.
-If @nbr[show-solutions?] is not @nbr[#f], and argument @nbr[whole-classes?] is @nbr[#f],
-one solution of every class of symmetrically equivalent solutions is shown.
-If both @nbr[show-solutions?] and @nbr[whole-classes?] have true value, all solutions are shown.
-If @nbr[show-boards?] is not @nbr[#f],
-solutions are shown as pictures, otherwise they are shown as lists.
+If @racket[show-solutions?] is not @nbr[#f], and argument @racket[whole-classes?] is @nbr[#f],
+one solution of every class of symmetrically equivalent solutions is printed.
+If both @racket[show-solutions?] and @racket[whole-classes?] have true value, all solutions are printed.
+If @racket[show-boards?] is not @nbr[#f],
+solutions are printed as pictures, otherwise they are printed as lists.
 
 A rank is a row of the board. A file is a column of the board.
 Ranks are identified by the numbers @nbr[0] up to but not including @nbr[N].
@@ -219,7 +219,7 @@ Notice the peculiar small number of solutions for @nbr[N]=@nbr[6],
 all in the same class and with symmetry R@↑{2}.
 See @url{https://oeis.org/A000170} and @url{https://oeis.org/A002562} for more values.}
 
-@section{Example}
+@section{Examples}
 @Interaction[
 (queens 8 #t #f #f)]
 
