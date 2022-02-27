@@ -188,7 +188,7 @@
      (define n (count (λ (class) (= (length class) k)) classes))
      (if (zero? n)
       (loop (cdr class-size) done)
-      (cons (string->symbol (format "~s*~s" n k)) (loop (cdr class-size) (+ (* n k) done))))))))
+      (cons (cons n k) (loop (cdr class-size) (+ (* n k) done))))))))
  
  (print-results)
  (list N nr-of-sols nr-of-classes (map-length classes)))

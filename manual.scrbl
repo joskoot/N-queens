@@ -17,10 +17,21 @@
  (show-solutions? any/c #t)
  (whole-classes? any/c #t)
  (show-boards? any/c #t))
- (list/c natural? natural? natural? (listof n*s))]{
+ (list/c natural? natural? natural? (listof (cons/c natural? natural?)))]{
 
 Computes all solutions of the @nbr[N]-queens problem on an @nbr[N]×@nbr[N] board and
 shows the number of solutions and the number of symmetrically distinct solutions.
+The result should be read as:
+@inset{
+@tt{(@nbr[N] @italic{nr-of-solutions} @italic{nr-of-classes} ((@italic{n} . @italic{s}) ...))}}
+where @italic{s} is the size of a non-empty class of symmetrically equivalent solutions
+and @italic{n} the number of classes of this size.
+A class size is 1, 2, 4 or 8 and a size never is mentioned more than once.
+Class size 1 is a special case for @nbr[N]=@nbr[0] and @nbr[N]=@nbr[1].
+@inset{@Tabular[
+((@tt{(+ @italic{n} ...)} "=" @tt{@italic{nr-of-classes}})
+ (@tt{(+ (* @italic{n} @italic{s}) ...)} "=" @tt{@italic{nr-of-solutions}}))
+ #:sep (hspace 1) #:column-properties '(right 'left 'left)]}
 
 If optional argument @racket[show-solutions?] is @nbr[#f],
 no solutions are shown and the other two optional arguments are ignored.
@@ -63,13 +74,13 @@ For @nbr[N]=@nbr[0] and @nbr[N]=@nbr[1] there is one solution with all symmetrie
 For @nbr[N]=@nbr[2] and @nbr[N]=@nbr[3] there are no solutions.
 For @nbr[N]≥@nbr[4] there always is more than one solution and the following list is returned:
 
-@inset{@tt{(@nbr[N] nr-of-solutions nr-of-classes (n*s ...))}}
+@inset{@tt{(@nbr[N] @italic{nr-of-solutions} @italic{nr-of-classes} ((@italic{n} . @italic{s}) ...))}}
 
-where @tt{s} is @nbr[2], @nbr[4] or @nbr[8] and @tt{n*s} indicates
-that there are @tt{n} classes of size @tt{s}.
+where @tt{@italic{s}} is @nbr[2], @nbr[4] or @nbr[8] and @tt{(@italic{n} . @italic{s})} indicates
+that there are @tt{@italic{n}} classes of size @tt{@italic{s}}.
 A class is a set of distinct but symmetrically equivalent solutions.
-@nbr[(+ n ...)] always equals the number of all classes.
-@nbr[(+ (* n s) ...)] always is the total number of solutions.
+@tt{(+ @italic{n} ...)} always equals the number of all classes.
+@tt{(+ (* @italic{n} @italic{s}) ...)} always is the total number of solutions.
 The returned data are printed too.
 
 @section{Symmetries}
