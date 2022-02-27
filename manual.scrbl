@@ -36,8 +36,8 @@ Chess players number the ranks from 1 up to and including @nbr[N] and files by t
 'a', 'b', 'c', etc. 
 However, when programming it is easier to identify ranks and files by the numbers
 @nbr[0] up to but not including @nbr[N].
-In every solution every rank and every file contains exactly one queen.
-Therefore a solution can be written as:
+In a solution, every rank and every file contains exactly one queen.
+Therefore a solution can be written as a list of ranks:
 
 @inset{@tt{(rank@↓{0} .. rank@↓{@nbr[N]-1})}}
 
@@ -50,7 +50,7 @@ The list can also be read as:
 the i-th element showing which file in rank i contains the queen.
 The difference between these two interpretations corresponds to
 a reflection in the diagonal from field @tt{(0 0)} to field @tt{(@nbr[N]-1 @nbr[N]-1)}.
-Reversal of this list of files corresponds to reflection in the centerline parellel to the ranks.
+Reversal of a list of files corresponds to reflection in the centerline parellel to the ranks.
 
 Solutions are sorted according to the order of their class of symmetrical
 equivalence. Within each such class they are sorted according to their representation
@@ -73,11 +73,7 @@ The returned data are printed too.
 
 A square has 8 symmetries. Consider the square:
 
-@inset{@tt{
-   3 ―――― 2@(lb)
-   │@(hspace 6)│@(lb)
-   │@(hspace 6)│@(lb)
-   0 ―――― 1}}
+@inset{@image["square.gif" #:scale 0.75]}
 
 The symmetries are:
 
