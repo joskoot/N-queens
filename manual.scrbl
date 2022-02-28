@@ -41,7 +41,9 @@ If both @racket[show-solutions?] and @racket[whole-classes?] have true value,
 all solutions are printed.
 @nb{If @racket[show-boards?]} is @nbr[#f],
 solutions are printed as lists.
-When running with DrRacket and argument @racket[show-boards?] is not @nbr[#f],
+When running with
+@seclink['(lib "scribblings/drracket/drracket.scrbl")]{DrRacket}
+ and argument @racket[show-boards?] is not @nbr[#f],
 solutions are printed as pictures in the interactions window.
 A true value for @racket[show-boards?] makes no sense for output to any other location.
 
