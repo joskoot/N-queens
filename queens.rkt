@@ -3,69 +3,62 @@
 (provide queens)
 (require (only-in 2htdp/image square rectangle star overlay text/font))
 
-(define (queens N (show-sols? #t) (whole-classes? #t) (show-boards? #t))
+; Both files and ranks are identified by the numbers 0 up to but not including N.
+; A chess player identifies files by the letters of the alphabet.
+; Natural numbers are easier when given a file f we want the next file.
+; An encoding in letters is possible. of course, would slow down the program.
+; Procedure generate-solutions does a loop in a loop in a loop.
+
+(define (queens N (show-solutions? #t) (whole-classes? #t) (show-boards? #t))
  ; A (partial) solution is a list of ranks in reversed order of files.
  ; Hence, the last element of the list is the rank in file 0 (= file a).
- ; 'sol' is short for solution and 'part' is short for partial.
- ; Every partial solution is accompanied by a set of free ranks (in a pair).
- ; Without the set of free ranks we call it a pure sol.
- ; Not every rank in such a set is free, for the set does not account for diagonal attacks.
- ; It accounts for horizontal attacks only, making the set applicable to all remaining files.
-
- (define pure-sol car)
- (define free-ranks-of-sol cdr)
- (define make-sol cons)
- (define set-of-all-ranks (apply seteq (range N)))
+ ; Whether the first or the last element of a partial solution corresponds to file 0 is important
+ ; in procedure safe? and attacks?. It is a choise, but once made we must stick to it.
  
- (define (generate-solutions part-N)
+ (define (generate-solutions partial-N) ; Place queens in files 0 up to but not including partial-N.
   (cond
-   ((zero? part-N) (list (make-sol '() set-of-all-ranks)))
-   (else ; loop for each part-sol of part-N files.
-    (let loop1 ((old-part-sols (generate-solutions (sub1 part-N))) (new-part-sols '()))
+   ((zero? partial-N) '(())) ; We want a list of solutions, each solution being a list. Hence (()).
+   (else ; Loop for each partial-solution of partial-N files.
+    (let loop1
+     ((old-partial-solutions (generate-solutions (sub1 partial-N)))
+      (new-partial-solutions '()))
      (cond
-      ((null? old-part-sols) new-part-sols)
+      ((null? old-partial-solutions) new-partial-solutions)
       (else
        (let
-        ((old-part-sol (car old-part-sols))
-         (old-part-sols (cdr old-part-sols)))
-        ; nested loop for each rank in file part-N.
-        (let loop2 ((rank 0) (new-part-sols new-part-sols))
+        ((old-partial-solution (car old-partial-solutions))
+         (old-partial-solutions (cdr old-partial-solutions)))
+        ; Nested loop for each rank in file partial-N.
+        (let loop2 ((rank 0) (new-partial-solutions new-partial-solutions))
          (cond
-          ((>= rank N) (loop1 old-part-sols new-part-sols))
+          ((>= rank N) (loop1 old-partial-solutions new-partial-solutions))
           (else
            (cond
-            ((safe? old-part-sol rank part-N) ; Nested loop too! over files of the old part-sol.
-             ; Notice that in a part-sol ranks are listed in reversed order of files.
-             (loop2 (add1 rank)
-              (make-sol
-               (cons (cons rank (pure-sol old-part-sol))
-                (set-remove (free-ranks-of-sol old-part-sol) rank))
-               new-part-sols)))
-            (else (loop2 (add1 rank) new-part-sols)))))))))))))
+            ((safe? old-partial-solution rank partial-N) ; Does nested loop over files.
+             (loop2 (add1 rank) (cons (cons rank old-partial-solution) new-partial-solutions)))
+            (else (loop2 (add1 rank) new-partial-solutions)))))))))))))
 
- (define (safe? part-sol new-rank new-file)
-  (and
-   (set-member? (free-ranks-of-sol part-sol) new-rank)
-   (let loop ((old-file (sub1 new-file)) (sol-of-sol (pure-sol part-sol)))
-    ; Start with old-file = new-file = part-N,
-    ; because a part-sol lists ranks in reversed order of files.
-    (or (null? sol-of-sol)
-     (let ((old-rank (car sol-of-sol)))
-      (and
-       (not (attacks? old-file old-rank new-file new-rank))
-       (loop (sub1 old-file) (cdr sol-of-sol))))))))
+ (define (safe? partial-solution new-rank new-file)
+  (let loop ((old-file (sub1 new-file)) (list-of-ranks partial-solution))
+   ; Start with old-file = new-file = partial-N, because the choise is made
+   ; to interpret a solution as a list of ranks in reversed order of files.
+   (or (null? list-of-ranks)
+    (let ((old-rank (car list-of-ranks)))
+     (and
+      (not (attacks? old-file old-rank new-file new-rank))
+      (loop (sub1 old-file) (cdr list-of-ranks)))))))
  
  (define (attacks? file-a rank-a file-b rank-b)
   (or
- ;  (= rank-a rank-b)
+   (= rank-a rank-b)
    (= file-a file-b)
    (= (+ file-a rank-a) (+ file-b rank-b))
    (= (- file-a rank-a) (- file-b rank-b))))
  
- (define (make-classes all-sols)
+ (define (make-classes)
   (define hash (make-hash))
-  (for ((sol (in-list all-sols)))
-   (define classes (find-symmetrically-distinct-sols sol))
+  (for ((solution (in-list all-solutions)))
+   (define classes (find-symmetrically-distinct-solutions solution))
    (let loop ((class classes))
     (cond
      ((null? class) (hash-set! hash (car classes) (apply set classes)))
@@ -73,12 +66,12 @@
      (else (loop (cdr class))))))
   (sort
    (for/list ((class (in-hash-values hash)))
-    (sort (set->list class) sol<?))
+    (sort (set->list class) solution<?))
     class<?))
  
- (define (find-symmetrically-distinct-sols sol)
-  (define (apply-symmetry-operation symmetry-operation) (symmetry-operation sol))
-  (remove-duplicates (cons sol (map apply-symmetry-operation symmetry-operations))))
+ (define (find-symmetrically-distinct-solutions solution)
+  (define (apply-symmetry-operation symmetry-operation) (symmetry-operation solution))
+  (remove-duplicates (cons solution (map apply-symmetry-operation symmetry-operations))))
 
  (define (find-symmetries class-size)
   (case class-size
@@ -101,24 +94,24 @@
   (define R2  (compose Sh Sv))
   (define R3  (compose Sh Sd1))
   (define Sd2 (compose R2 Sd1))
-  (list #;identity R R2 R3 Sh Sv Sd1 Sd2))
+  (list #;identity R R2 R3 Sh Sv Sd1 Sd2)) ; We don't need the identity.
 
  (define symmetry-operations (make-symmetry-operations))
 
  (define (class<? class1 class2)
   (or (< (length class1) (length class2))
-   (and (= (length class1) (length class2)) (sol<? (car class1) (car class2)))))
+   (and (= (length class1) (length class2)) (solution<? (car class1) (car class2)))))
  
- (define (sol<? sol1 sol2)
+ (define (solution<? solution-1 solution-2)
   (cond
-   ((null? sol1) #f)
-   ((< (car sol1) (car sol2)))
-   ((and (= (car sol1) (car sol2)) (sol<? (cdr sol1) (cdr sol2))))
+   ((null? solution-1) #f)
+   ((< (car solution-1) (car solution-2)))
+   ((and (= (car solution-1) (car solution-2)) (solution<? (cdr solution-1) (cdr solution-2))))
    (else #f)))
 
- (define all-sols (map pure-sol (generate-solutions N)))
- (define classes (make-classes all-sols))
- (define nr-of-sols (length all-sols))
+ (define all-solutions (generate-solutions N))
+ (define classes (make-classes))
+ (define nr-of-solutions (length all-solutions))
  (define nr-of-classes (length classes))
  
  (define (print-board lst)
@@ -159,10 +152,10 @@
   (printf "~n~n")
   (printf line)
   (printf "N : ~a~n" N)
-  (printf "Number of solutions : ~a~n" nr-of-sols)
+  (printf "Number of solutions : ~a~n" nr-of-solutions)
   (printf "Number of classes : ~a~n" nr-of-classes)
-  (printf "Class sizes: ~s~n" (map-length classes))
-  (when show-sols?
+  (printf "Class sizes: ~s~n" (nr-of-classes-of-given-size))
+  (when show-solutions?
    (for ((class (in-list classes)) (n (in-naturals 1)))
     (define nr (length class))
     (printf "~nClass ~s, symmetries ~s, nr of symmetrically equivalent solutions: ~s~n"
@@ -179,7 +172,7 @@
 
  (define line (string-append (make-string 75 #\―) "~n"))
 
- (define (map-length classes)
+ (define (nr-of-classes-of-given-size)
   (let loop ((class-size '(1 2 4 8)) (done 0))
    (cond
     ((null? class-size) (unless (= done (apply + (map length classes))) (error "check fails")) '())
@@ -191,5 +184,6 @@
       (cons (cons n k) (loop (cdr class-size) (+ (* n k) done))))))))
  
  (print-results)
- (list N nr-of-sols nr-of-classes (map-length classes)))
+ (list N nr-of-solutions nr-of-classes (nr-of-classes-of-given-size)))
 
+(for/list ((N (in-range 17))) (time (queens N #f #f #f)))
