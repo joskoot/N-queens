@@ -1,31 +1,127 @@
-#lang racket
+#lang racket/base
 
 (provide queens)
+
 (require (only-in 2htdp/image square rectangle star overlay text/font))
+(require (only-in racket set-member? set-union set remove-duplicates count))
+
+#|
+
+N-queens
+
+Find all solutions of placing N queens on a NxN board, such that no queen attacks another queen.
+Files and ranks will be identified by numbers 0 up to but not including N.
+A solution has exactly one queen in every file (and in every rank).
+Therefore a solution can be written as a list (rank[N-1] .. rank[0])
+where rank[i] indicates which rank of file i contains its queen.
+Solutions are made by placing queens in non attacked ranks of successive files.
+(rank[K] .. rank[0]) with K<N-1 is a partial solution.
+Given a list of partial solutions, a new list of partial solutions is made.
+For each old partial solution every rank of the next file is tried.
+For N<4 the solutions are returned immediately.
+For N≥4 we have the following nested loops:
+
+  1. file-loop
+     Start with all partial solutions of one file: ((0) (1) .. (N-1)).
+     In every cycle the list of partial solutions of f files
+     is replaced by the list of partial solutions of f+1 files.
+     When f reaches N, the partial solutions are the full solutions.
+
+  2. partial-solution-loop
+     For each known partial solution find all partial solutions with one file added.
+
+  3. rank-loop
+     For each known partial solution try every rank in the next file.
+
+  4. safe? and attack?
+     Within rank-loop the rank must be tested not being attacked.
+     This involves a short loop cycling over the length the known partial solution.
+
+Loop 2 may have many cycles.
+The other loops have N or less cycles.
+After all solutions have been found,
+the list of solutions is divided in sublists of symmetrically equivalent solutions.
+A sublist of symmetrically equivalent solutions is an equivalence-class.
+
+No speeding up strategies are used. There are two of them:
+
+  1. By placing queens only in the lower half of the first file
+     and after all solutions have been found
+     adding the reflections of all solutions in the horizontal center line
+     (regarding ranks horizontal, and files vertical).
+
+  2. Also by placing queens in the first file or first few files
+     and for each such partial solution,
+     parallely computing the full solutions that can be generated from them.
+
+For each partial solution keeping record of attacked fields in files yet to be added
+does not increase speed and would require much more memory.
+
+WARNING
+The number of solutions grows very fast with increasing N:
+
+――――――――――――――――――――
+ N solutions classes
+―――――――――――――――――――― 
+ 0         1       1
+ 1         1       1
+ 2         0       0
+ 3         0       0
+ 4         2       1
+ 5        10       2
+ 6         4       1
+ 7        40       6
+ 8        92      12
+ 9       352      46
+10       724      92
+11      2680     341
+12     14200    1787
+13     73712    9233
+14    365596   45752
+15   2279184  285053
+――――――――――――――――――――
+
+See https://oeis.org/A000170 and https://oeis.org/A002562 for more values.
+
+|#
 
 (define (queens N (show-solutions? #t) (whole-classes? #t) (show-boards? #t))
  
  (define (generate-solutions)
-  (let file-loop ((file 0) (occupied-files '()) (old-solutions '(())))
-   (cond
-    ((= file N) old-solutions)
-    ((null? old-solutions) '())
-    (else
-     (let solution-loop ((old-solutions old-solutions) (new-solutions '()))
-      (cond
-       ((null? old-solutions) (file-loop (add1 file) (cons file occupied-files) new-solutions))
-       (else
-        (let ((old-solution (car old-solutions)) (old-solutions (cdr old-solutions)))
-         (let rank-loop ((rank 0) (new-solutions new-solutions))
-          (cond
-           ((= rank N) (solution-loop old-solutions new-solutions))
-           ((for/or ((old-rank (in-list old-solution)) (old-file (in-list occupied-files)))
-             (attacks? old-file old-rank file rank))
-            (rank-loop (add1 rank) new-solutions))
-           (else (rank-loop (add1 rank) (cons (cons rank old-solution) new-solutions)))))))))))))
+  (case N
+   ((0) '(()))
+   ((1) '((0)))
+   ((2 3) '())
+   (else
+    (let file-loop ((file 1) (known-partial-solutions (build-list N list)))
+    (cond
+     ((= file N) known-partial-solutions) ; With file=N we have all full solutions. Exit file-loop.
+     (else
+      (let partial-solution-loop
+       ((known-partial-solutions known-partial-solutions) (new-partial-solutions '()))
+       (cond
+        ((null? known-partial-solutions) ; Exit solution-loop and continue file-loop.
+         (file-loop (add1 file) new-partial-solutions))
+        (else
+         (let ((known-partial-solution (car known-partial-solutions)))
+          (let rank-loop ((rank 0) (new-partial-solutions new-partial-solutions))
+           (cond
+            ((= rank N) ; Exit rank-loop and continue solution-loop.
+             (partial-solution-loop (cdr known-partial-solutions) new-partial-solutions))
+            ((safe? rank file known-partial-solution (sub1 file))
+             ; Continue rank-loop with a new partial solution added.
+             (rank-loop (add1 rank) (cons (cons rank known-partial-solution) new-partial-solutions)))
+            (else ; Continue rank-loop without adding a new partial solution.
+             (rank-loop (add1 rank) new-partial-solutions))))))))))))))
+
+ (define (safe? rank file solution file-of-first-element-of-solution)
+  (cond
+   ((null? solution))
+   ((attacks? file rank file-of-first-element-of-solution (car solution)) #f)
+   (else (safe? rank file (cdr solution) (sub1 file-of-first-element-of-solution)))))
 
  (define (attacks? file-a rank-a file-b rank-b)
-  (or
+  (or ; No need to check file-a ≠ file-b, for always file-a > file-b.
    (= rank-a rank-b)
    (= (+ file-a rank-a) (+ file-b rank-b))
    (= (- file-a rank-a) (- file-b rank-b))))
@@ -58,7 +154,7 @@
  (define (find-generators class-size)
   (case class-size
    ((1) '(E))
-   ((2) '(E Sv=Sh=Sd2=Sd2))
+   ((2) '(E Sv=Sh=Sd1=Sd2))
    ((4) '(E R=R3 Sv=Sh Sd1=Sd2))
    ((8) '(E R R2 R3 Sv Sh Sd1 Sd2))
    (else (error "wrong-c-size"))))
@@ -171,3 +267,5 @@
  
  (print-results)
  (list N nr-of-solutions nr-of-classes (nr-of-classes-of-given-size)))
+
+(for/list ((N (in-range 16))) (time (queens N #f)))
