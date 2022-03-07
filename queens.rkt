@@ -275,5 +275,3 @@ See https://oeis.org/A000170 and https://oeis.org/A002562 for more values.
   
  (print-results)
  (list N nr-of-solutions nr-of-classes nr-of-classes-of-given-size))
-
-(for/list ((N (in-range 16))) (time (queens N #f)))
