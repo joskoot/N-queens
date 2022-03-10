@@ -16,7 +16,8 @@
  (N natural?)
  (show-solutions? any/c #t)
  (whole-classes? any/c #t)
- (show-boards? any/c #t))
+ (show-boards? any/c #t)
+ (look-ahead? any/c #f))
  (list/c natural? natural? natural? (listof (cons/c natural? natural?)))]{
 
 Computes all solutions of the @nbr[N]-queens problem on an @nbr[N]×@nbr[N] board and
@@ -46,6 +47,11 @@ When running with
  and argument @racket[show-boards?] is not @nbr[#f],
 solutions are printed as pictures in the interactions window.
 A true value for @racket[show-boards?] makes no sense for output to any other location.
+
+If argument @nbr[look-ahead?] is true, every partial solution is checked to leave at least one rank
+free in every remaining files. This reduces memory but increases time. If the argument is @nbr[#f],
+partial solutions are rejected when the next file has no free rank, without inspecting the remaining
+files.
 
 A rank is a row of the board. A file a column.
 Chess players number the ranks from 1 up to and including @nbr[N] and files by the letters
