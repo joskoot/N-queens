@@ -9,7 +9,7 @@
 @author{Jacob J. A. Koot}
 @(Defmodule)
 
-@section{Procedure N-queens}
+@section{Procedure queens}
 
 @defproc[
 (queens
