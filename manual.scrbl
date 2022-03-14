@@ -9,7 +9,7 @@
 @author{Jacob J. A. Koot}
 @(Defmodule)
 
-@section{Procedure queens}
+@section{Procedure N-queens}
 
 @defproc[
 (queens
@@ -29,6 +29,8 @@ where @italic{s} is the size of a non-empty class of symmetrically equivalent so
 and @italic{n} the number of classes of this size.
 A class size is 1, 2, 4 or 8 and a size never is mentioned more than once.
 Class size 1 is a special case for @nbr[N]=@nbr[0] and @nbr[N]=@nbr[1].
+There are no solutions for @nbr[N]=@nbr[2] and @nbr[N]=@nbr[3].
+For @nbr[N]≥@nbr[4] the number of solutions is even and all class sizes are even.
 @inset{@Tabular[
 ((@tt{(+ @italic{n} ...)} "=" @tt{@italic{nr-of-classes}})
  (@tt{(+ (* @italic{n} @italic{s}) ...)} "=" @tt{@italic{nr-of-solutions}}))
@@ -136,6 +138,8 @@ the left column and the top row included. Because the top-left corner has identi
 every element P we have E•P=P=P•E, the left column and top row can be read both as labels and
 as part of the table proper.
 Notice that the composition is not abelean. For example R•S@↓{d1}=S@↓{v} and S@↓{d1}•R=S@↓{h}.
+The only two symmetries that commute with all symmetries are E and R@↑{2}; their
+columns list the symmetries in the same order as their rows.
 The group can be formed from a base of two elements only. There are 12 minimal bases:
 
 @inset{@Tabular[
@@ -187,7 +191,8 @@ This defines an equivalence relation.
 A solution for @nbr[N]≥@nbr[4] cannot have a reflection symmetry, because every rank, everyfile and
 every diagonal can contain one queen only. Remain the following three possibilities:
 
-@inset{   Solution s has symmetry R.
+@itemize[
+@item{   Solution s has symmetry R.
    This implies E(s)=R(s)=R@↑{2}(s)=R@↑{3}(s).
    Hence a rotation does not alter the solution.
    There are 2 equivalent but distinct solutions,
@@ -195,7 +200,7 @@ every diagonal can contain one queen only. Remain the following three possibilit
    but with R(s)=E(s) we have S@↓{v}(s)=S@↓{h}(s)=S@↓{d1}(s)=S@↓{d2}(s)
    meaning that every reflection produces the same solution.}
 
-@inset{
+@item{
    Solution s has symmetries E and R@↑{2} only.
    There are 4 equivalent but distinct solutions,
    which can be obtained one from another by R-odd,
@@ -203,12 +208,12 @@ every diagonal can contain one queen only. Remain the following three possibilit
    where R-odd is R or R@↑{3}.
    With R@↑{2}(s)=E(s), we also have R@↑{3}(s)=R(s), S@↓{h}(s)=S@↓{v}(s) and S@↓{d1}(s)=S@↓{d2}(s).}
 
-@inset{
+@item{
    Solution s has symmetry E only.
    In common language no symmetry at all.
    There are 8 equivalent but distinct solutions.
    Given a solution s, every symmetry operation P yields a distinct solution P(s),
-   E(s) being equal to s, of course.}
+   E(s) being equal to s, of course.}]
 
 Hence, for @nbr[N]≥@nbr[4], a class of equivalent solutions consists of 2, 4 or 8 distinct solutions
 and the total number of solutions is even.
