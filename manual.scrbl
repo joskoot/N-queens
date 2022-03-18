@@ -30,7 +30,7 @@ and @italic{n} the number of classes of this size.
 A class size is 1, 2, 4 or 8 and a size never is mentioned more than once.
 Class size 1 is a special case for @nbr[N]=@nbr[0] and @nbr[N]=@nbr[1].
 There are no solutions for @nbr[N]=@nbr[2] and @nbr[N]=@nbr[3].
-For @nbr[N]≥@nbr[4] the number of solutions is even and all class sizes are even.
+For @nbr[N]≥@nbr[4] all class sizes are even and hence the total number of solutions is even as well.
 @inset{@Tabular[
 ((@tt{(+ @italic{n} ...)} "=" @tt{@italic{nr-of-classes}})
  (@tt{(+ (* @italic{n} @italic{s}) ...)} "=" @tt{@italic{nr-of-solutions}}))
@@ -250,4 +250,4 @@ See @url{https://oeis.org/A000170} and @url{https://oeis.org/A002562} for more v
 @Interaction[
 (queens 8 #t #f #f)]
 
-@(image "picture-example.gif")
+@(image "picture-example.gif" #:scale 1.2)
