@@ -3,4 +3,4 @@ queens.rkt computes the number of solutions and classes of symmetrically equival
 Optionally solutions are shown as pictures.
 
 count-with-futures.rkt is a parallelized program counting solutions without classification in equivalence classes.\
-This program does not require much memory. 
+This program does not require much memory. The parallelization works well with Racket CS. It does not work with Racket BC.
