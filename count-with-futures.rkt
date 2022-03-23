@@ -15,12 +15,12 @@ and add the counts. A partial solution with K=N is a full solution and counts as
 The computation can easily be parallelized because counting the number of full solutions can be done
 independently for each partial solution and for each rank it is extended with. In the program below
 counting is parallelized by means of futures for the first nr-of-files-to-be-parallelized files, which
-for N>3 is set to (ceiling (inexact->exact (/ (log (processor-count)) (log N)))). This avoids
+for N>3 is set to (ceiling (inexact->exact (/ (log (processor-count)) (log N)))). This avoids further
 parallelization when no more free processors are available. Running much more futures than processors
 available may slow down the computation and may require more memory than necessary. The program does
-not require much memory, for it does not need to memorize many partial solutions. The number of
-partial solutions in memory never exceeds N times the number of futures. Factor N stems from the
-recursion over files.
+not require much memory, though, for it does not need to memorize many partial solutions. The number
+of partial solutions in memory never exceeds N times the number of futures. Factor N stems from the
+recursion progressing through subsequent files.
 
 By Jacob J. A. Koot
 
@@ -40,16 +40,18 @@ By Jacob J. A. Koot
     ((< current-nr-of-files nr-of-files-to-be-parallelized)
      (define futures
       (for/list ((rank (in-range N)) #:when (safe? rank current-nr-of-files partial-solution))
-       (future (λ () (N-queens-count (cons rank partial-solution) (add1 current-nr-of-files))))))
-     (apply + (for/list ((f (in-list futures))) (touch f))))
+       (future (λ () (add-rank rank partial-solution current-nr-of-files)))))
+     (apply + (map touch futures)))
     (else
      (apply +
       (map
        (λ (rank)
         (if (safe? rank current-nr-of-files partial-solution)
-         (N-queens-count (cons rank partial-solution) (add1 current-nr-of-files))
+         (add-rank rank partial-solution current-nr-of-files)
          0))
        (range N))))))
+  (define (add-rank rank partial-solution current-nr-of-files)
+   (N-queens-count (cons rank partial-solution) (add1 current-nr-of-files)))
   (case N
    ((0 1) 1)
    ((2 3) 0)
@@ -66,16 +68,45 @@ By Jacob J. A. Koot
    (= (+ rank1 file1) (+ rank2 file2))
    (= (- rank1 file1) (- rank2 file2)))))
 
-;―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+#|――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-(require 'N-queens-count-with-futures)
-(define-syntax-rule (timer expr)
- (let*
-  ((starting-time (current-inexact-milliseconds))
-   (value expr))
-  (printf "~s~n" (- (current-inexact-milliseconds) starting-time))
-  value))
+Install fmt/fmt from https://github.com/joskoot/fmt.git.
+
+The number of solutions is computed for N from 0 up to and including max-N. Shown are:
+
+   First line  : number of processors available.
+   Second line : #t if furures are enabled.
+   A table showing:
+
+      N               : board size
+      count           : number of solutions
+      cpu             : cpu time in ms
+      real            : real time in ms
+      ratio           : count[N]/count[N-1] (na for N=0 or count[N-1]=0)
+      parallelization : cpu/real (na real=0)
+
+It may happen that some futures have terminated while others still are running. The still running ones
+could initiate futures in order to use the free processors, but this is not implemented. 
+
+|#
+
+(require 'N-queens-count-with-futures fmt/fmt)
+
 (processor-count)
 (futures-enabled?)
-(for ((N (in-range 16))) (printf "~s ~s~n" N (time (N-queens-count N))))
+(define max-N 17)
+((fmt 'cur "R2'N'2XR8'count'2XR8'cpu'2XR7'real'2XR5'ratio'2XL'parallelization'/"))
+
+(for/fold ((prev-count 0) #:result (void)) ((N (in-range (add1 max-N))))
+ (define-values (wrapped-count cpu real gc)
+  (time-apply N-queens-count (list N)))
+ (define current-count (car wrapped-count))
+ ((fmt 'cur "I2,2XI8,2XI8,2XI7,2XQ(SR5W)(SF5.2)2XQ(SR3W)(SF3.1)/")
+  N
+  current-count
+  cpu
+  real
+  (zero? prev-count) (if (zero? prev-count) 'na (/ current-count prev-count))
+  (zero? real) (if (zero? real) 'na (/ cpu real)))
+ current-count)
 
