@@ -91,11 +91,23 @@ could initiate futures in order to use the free processors, but this is not impl
 |#
 
 (require 'N-queens-count-with-futures fmt/fmt)
+(require (only-in racket/gui/base get-text-from-user))
 
 (processor-count)
 (futures-enabled?)
-(define max-N 17)
+;(define max-N 17)
 ((fmt 'cur "R2'N'2XR8'count'2XR8'cpu'2XR7'real'2XR5'ratio'2XL'parallelization'/"))
+
+(define max-N
+ (string->number
+  (get-text-from-user "N-queens"
+   (string-append
+    "Up to which N (included) do you want to compute the number of solutions?\n"
+    "Enter an exact non-negative integer.\n"
+    "Be aware that a large N may take much time."))))
+
+(unless (exact-nonnegative-integer? max-N)
+ (error 'dialog "exact-nonnegative-integer expected, but given: ~s" max-N))
 
 (for/fold ((prev-count 0) #:result (void)) ((N (in-range (add1 max-N))))
  (define-values (wrapped-count cpu real gc)
