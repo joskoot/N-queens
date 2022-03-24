@@ -251,3 +251,24 @@ See @url{https://oeis.org/A000170} and @url{https://oeis.org/A002562} for more v
 (queens 8 #t #f #f)]
 
 @(image "picture-example.gif" #:scale 1.2)
+
+@section{Count}
+@(Defmodule2)
+Opens a dialog asking for an exact non-negative number N-max.
+Shows a table of the number of solutions for N from 0 up to and including max-N.
+Uses futures for speeding up. The table shows:
+
+@inset{
+@Tabular[
+(("N"               "board size")
+ ("count"           "number of solutions")
+ ("cpu"             "cpu time in ms")
+ ("real"            "real time in ms")
+ ("ratio"           "count[N]/count[N−1] (na for N=0 or count[N−1]=0)")
+ ("parallelization" "cpu/real (na when real=0))")) #:sep (list (hspace 1) ":" (hspace 1))]}
+
+The program is low on memory because it does not need to memorize solutions.
+It may take much time for large N, though.
+It uses as many or slightly more futures than processors available.
+Check @nbr[processor-count] and @nbr[futures-enabled?].
+@note{The parallelization with futures does not work with Racket BC. Use Racket CS.}

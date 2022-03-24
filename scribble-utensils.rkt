@@ -10,9 +10,9 @@
   scribble/eval
   scribble/racket
   (except-in racket natural?)
-  (for-label "queens.rkt"
+  (for-label "queens.rkt" "count-with-futures.rkt"
               (except-in racket set natural?) racket/block racket/function)
-  (for-template "queens.rkt" (except-in racket set natural?))
+  (for-template "queens.rkt" "count-with-futures.rkt" (except-in racket set natural?))
   (for-syntax (except-in racket set natural?) racket/block))
 
 @(define-for-syntax local #f)
@@ -70,6 +70,10 @@
 @(define-syntax (Defmodule stx)
   (if local #'(defmodule "queens.rkt" #:packages ())
             #'(defmodule N-queens/queens #:packages ())))
+
+@(define-syntax (Defmodule2 stx)
+  (if local #'(defmodule "count-with-futures.rkt" #:packages ())
+            #'(defmodule N-queens/count-with-futures #:packages ())))
 
 @(define-syntax-rule (nber x ...) (nb (elemref    x ...)))
 @(define-syntax-rule (nbrl x ...) (nb (racketlink x ...)))
