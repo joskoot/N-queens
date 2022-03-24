@@ -272,3 +272,33 @@ It may take much time for large N, though.
 It uses as many or slightly more futures than processors available.
 Check @nbr[processor-count] and @nbr[futures-enabled?].
 @note{The parallelization with futures does not work with Racket BC. Use Racket CS.}
+Example with 8 processors:
+
+@inset{
+@tt{C:\>racket  -e "(require N-queens/count-with-futures)"}
+ 
+@(image "dialog.gif")
+
+Output:
+
+@Tabular[
+(
+ (@tt{N}     @tt{count}       @tt{cpu}     @tt{real}  @tt{ratio}  @tt{parallelization})
+ (@tt{0}         @tt{1}         @tt{0}        @tt{0}     @tt{na}   @tt{na})
+ (@tt{1}         @tt{1}         @tt{0}        @tt{0}   @tt{1.00}   @tt{na})
+ (@tt{2}         @tt{0}         @tt{0}        @tt{0}   @tt{0.00}   @tt{na})
+ (@tt{3}         @tt{0}         @tt{0}        @tt{0}     @tt{na}   @tt{na})
+ (@tt{4}         @tt{2}         @tt{0}        @tt{0}     @tt{na}   @tt{na})
+ (@tt{5}        @tt{10}         @tt{0}        @tt{0}   @tt{5.00}   @tt{na})
+ (@tt{6}         @tt{4}         @tt{0}        @tt{0}   @tt{0.40}   @tt{na})
+ (@tt{7}        @tt{40}         @tt{0}        @tt{1}  @tt{10.00}  @tt{0.0})
+ (@tt{8}        @tt{92}         @tt{0}        @tt{0}   @tt{2.30}   @tt{na})
+ (@tt{9}       @tt{352}        @tt{62}       @tt{38}   @tt{3.83}  @tt{1.6})
+(@tt{10}       @tt{724}         @tt{0}        @tt{8}   @tt{2.06}  @tt{0.0})
+(@tt{11}      @tt{2680}       @tt{390}      @tt{130}   @tt{3.70}  @tt{3.0})
+(@tt{12}     @tt{14200}      @tt{1203}      @tt{259}   @tt{5.30}  @tt{4.6})
+(@tt{13}     @tt{73712}      @tt{7343}     @tt{1681}   @tt{5.19}  @tt{4.4})
+(@tt{14}    @tt{365596}     @tt{47140}    @tt{10544}   @tt{4.96}  @tt{4.5})
+(@tt{15}   @tt{2279184}    @tt{317437}    @tt{51854}   @tt{6.23}  @tt{6.1}))
+#:sep (hspace 2)
+#:column-properties '(right right right right right left)]}
